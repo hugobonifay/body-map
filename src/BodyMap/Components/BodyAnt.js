@@ -17,21 +17,21 @@ const BodyAnt = ({
                 <g id="Calque_2" data-name="Calque 2">
                     <g id="body_face">
                         {bodyAnt.map((membre, index) => 
-                        <Tooltip
-                            key={`${membre}__${index}`}
-                            title={tooltip ? membre.name : ""}
-                        >
-                            <path
-                                className={
-                                    (selectionItems.some(item => item.name === membre.name) || selected === membre.name) 
-                                        ? style.partSelected
-                                        : style.part
-                                }
-                                onClick={() => handleClickBody(membre.name)} 
-                                id={membre.id}
-                                d={membre.d}
-                                //fill={"#b3b3b3"}
-                            />
+                            <Tooltip
+                                key={`${membre}__${index}`}
+                                title={tooltip ? membre.name : ""}
+                            >
+                                <path
+                                    className={
+                                        (selectionItems.some(item => item.name === membre.name) || selected === membre.name) 
+                                            ? style.partSelected
+                                            : style.part
+                                    }
+                                    onClick={() => handleClickBody(membre.name)} 
+                                    id={membre.id}
+                                    d={membre.d}
+                                    //fill={"#b3b3b3"}
+                                />
                             </Tooltip>
                         )}
                     </g>

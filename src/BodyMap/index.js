@@ -50,19 +50,14 @@ const BodyMap = () => {
                     ...item,
                     val: newValue
                 }
-            } else {
-                return item
             }
+            return item
         }))
     }
 
     const handleClickSaisir = () => {
         setMode("saisie")
-        //if (state.some(item => item.name === name)) {
-            //return setState(state => state.filter(d => d.name !== name))
-        //} else {
-            return setState([...state, { name: name, val: 5 } ])
-        //}
+        setState([...state, { name: name, val: 5 } ])
     }
 
     const handleCancel = () => {
@@ -77,24 +72,22 @@ const BodyMap = () => {
         setValue(5)
     }
 
-    console.log(state)
-
     return (
         <div className={style.root}>
            <Header douleur={name} />
            <LinearGradient />
             <div className={style.container}>
                 <BodyAnt
+                    tooltip
                     selected={name}
                     selectionItems={state}
                     handleClickBody={membre => handleClickBody(membre)}
-                    tooltip={true}
                 />
                 <BodyPost 
+                    tooltip
                     selected={name}
                     selectionItems={state}
                     handleClickBody={membre => handleClickBody(membre)}
-                    tooltip={true}
                 />
             </div>
 

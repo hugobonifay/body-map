@@ -1,6 +1,6 @@
 {
-  "name": "react-body-map",
-  "version": "0.1.0",
+  "name": "body-map",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.10",
@@ -13,10 +13,11 @@
     "path": "^0.12.7",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "^3.4.3"
   },
   "scripts": {
     "start": "node server.js",
+    "devmode": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
