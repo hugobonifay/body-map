@@ -1,54 +1,37 @@
-
-.root {
-    width: 100%;
-    display: flex;
-    flex-flow: column;
-    justify-content: flex-start;
-}
-
-.text { 
-    width: 100%;
-    height: 50px;
-    background: white;
+.header {
     position: fixed;
-    top:0;
-    border-bottom: 1px solid grey;
-
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 54px;
+    background: rgba(46, 46, 49, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgb(70, 70, 70);
+    color: rgb(255, 59, 48);
+    z-index: 1200;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
-.container {
+.header p {
+    margin: 0 0 2px;
+}
+
+.bodies {
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-top: 67px;
     display: flex;
-    flex-flow: row;
-    justify-content: center;
-}
-@media (max-width:599px) {
-    .container { flex-flow: column ;}
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Body */
-
-.human_try {
-    width: 207px;
-    height: 500px;
-    display: block;
-    margin: 30px auto;
-}
-
-.part {
-    fill: url(#spam_color);
-    /* filter: url(#shadow); */
-    -webkit-tap-highlight-color: transparent;
-}
-.partSelected {
-    fill: url(#spam_selected);
-    -webkit-tap-highlight-color: transparent;
-}
-
-.part:hover, 
-.partSelected:hover {
-    fill: url(#spam_hover);
-    cursor: pointer;
+@media (max-width: 500px) {
+    .bodies {
+        flex-direction: column;
+    }
 }

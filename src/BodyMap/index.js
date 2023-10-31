@@ -1,138 +1,122 @@
-import React, { useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
+import { getBodyPart } from "./bodyParts"
 import style from "./index.module.css"
-import {
-    Fab,
-    makeStyles
-} from "@material-ui/core"
-import Create from "@material-ui/icons/Create"
-import LocalHospital from "@material-ui/icons/LocalHospital"
-import DialogSelection from "./Components/DialogSelection"
-import DialogSlider from "./Components/DialogSlider"
-import LinearGradient from "./Components/LinearGradient"
-import BodyAnt from "./Components/BodyAnt"
-import BodyPost from "./Components/BodyPost"
-import Header from "./Components/Header"
 
-const useStyles = makeStyles(theme => ({
-    fabEdit: {
-        position: 'fixed',
-        zIndex:1000,
-        bottom: theme.spacing(2),
-        right: theme.spacing(2),
-    },
-    fabDouleur: {
-        position: 'fixed',
-        zIndex:1000,
-        bottom: theme.spacing(2),
-        right: theme.spacing(11),
-    }
-}));
+const BodyContainer = ({ children }) => (
+    <div style={{
+        width: "207px",
+        height: "500px",
+        margin: "30px auto"
+    }}>
+        <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 375.42 832.97"
+        >
+            <g>
+                {children}
+            </g>
+        </svg>
+    </div>
+)
 
-const BodyMap = () => {
-    const classes = useStyles()
-    const [state, setState] = useState([])
-    const [value, setValue] = useState(5)
-    const [name, setName] = useState("")
-    const [mode, setMode] = useState("selection")
-
-    const handleClickBody = newValue => {
-        if (mode === "selection" && !state.some(item => item.name === newValue)) {
-            setValue(5)
-            setName(newValue)
-        }
-    }
-    
-    const handleChangeSlider = (e, newValue) => {
-        setValue(newValue)
-        setState(state => state.map((item, index) => {
-            if (item.name === name) {
-                return {
-                    ...item,
-                    val: newValue
-                }
-            }
-            return item
-        }))
-    }
-
-    const handleClickSaisir = () => {
-        setMode("saisie")
-        setState([...state, { name: name, val: 5 } ])
-    }
-
-    const handleCancel = () => {
-        setMode("selection")
-        setName("")
-        setState(state => state.filter(d => d.name !== name))
-    }
-
-    const handleSubmit = () => {
-        setMode("selection")
-        setName("")
-        setValue(5)
+const BodyPart = ({ bodyPart, fill, onClick }) => {
+    const handleClick = () => {
+        onClick({ id: bodyPart.id, name: bodyPart.name })
     }
 
     return (
-        <div className={style.root}>
-           <Header douleur={name} />
-           <LinearGradient />
-            <div className={style.container}>
-                <BodyAnt
-                    tooltip
-                    selected={name}
-                    selectionItems={state}
-                    handleClickBody={membre => handleClickBody(membre)}
-                />
-                <BodyPost 
-                    tooltip
-                    selected={name}
-                    selectionItems={state}
-                    handleClickBody={membre => handleClickBody(membre)}
-                />
+        <path
+            d={bodyPart.d}
+            id={bodyPart.id}
+            onClick={handleClick}
+            style={Object.assign({}, {
+                WebkitTapHighlightColor: "transparent",
+                cursor: "pointer"
+            }, { fill })}
+        />
+    )
+}
+
+const txt = {
+    fr: {
+        0: "Cliquez sur une partie du corps",
+        1: "Face antérieure",
+        2: "Face postérieure",
+    },
+    en: {
+        0: "Click on the body!",
+        1: "Anterior side",
+        2: "Posterior side"
+    }
+}
+
+const BodyMap = () => {
+    const [lang, setLang] = useState("en")
+    const [selected, setSelected] = useState({})
+
+    const antBodyParts = useMemo(() => {
+        return getBodyPart(lang).filter(({ face }) => face === "ant")
+    }, [lang]) 
+
+    const postBodyPart = useMemo(() => {
+        return getBodyPart(lang).filter(({ face }) => face === "post")
+    }, [lang]) 
+
+    const selectedName = useMemo(() => {
+        return getBodyPart(lang).find(d => selected.id === d.id)?.name || ""
+    }, [lang, selected.id])
+
+    const getFill = useCallback((bodyPartId) => {
+        if (selected.id === bodyPartId) return "rgb(255, 59, 48)"
+        return "rgb(96, 96, 96)"
+    }, [selected.id])
+
+    const handleClick = (newValue) => {
+        setSelected(newValue)
+    }
+
+    const handleChangeLang = (e) => {
+        setLang(e.target.value)
+    }
+
+    return (
+        <>
+            <div className={style.header}>
+                <p>{selectedName || txt[lang][0]}</p>
+                <select value={lang} onChange={handleChangeLang}>
+                    <option value="fr">FR</option>
+                    <option value="en">EN</option>
+                </select>
             </div>
-
-            <div>
-                <Fab 
-                    className={classes.fabEdit} 
-                    onClick={handleClickSaisir} 
-                    disabled={name === "" || mode === "saisie"}
-                >
-                    <Create />
-                </Fab>
-
-                <Fab 
-                    className={classes.fabDouleur} 
-                    onClick={() => setMode("check")} 
-                    disabled={state.length === 0 || mode === "saisie"}
-                >
-                    <LocalHospital />
-                </Fab>
+            <div className={style.bodies}>
+                <div>
+                    <p style={{ textAlign: "center" }}>{txt[lang][1]}</p>
+                    <BodyContainer>
+                        {antBodyParts.map((bodyPart, index) => 
+                            <BodyPart
+                                key={index}
+                                bodyPart={bodyPart}
+                                fill={getFill(bodyPart.id)}
+                                onClick={handleClick} 
+                            />
+                        )}
+                    </BodyContainer>
+                </div>
+                <div>
+                    <p style={{ textAlign: "center" }}>{txt[lang][2]}</p>
+                    <BodyContainer>
+                        {postBodyPart.map((bodyPart, index) => 
+                            <BodyPart
+                                key={index}
+                                bodyPart={bodyPart}
+                                fill={getFill(bodyPart.id)}
+                                onClick={handleClick} 
+                            />
+                        )}
+                    </BodyContainer>
+                </div>
             </div>
-
-            <div>
-                <DialogSelection open={mode === "check"} items={state} handleClose={() => setMode("selection")} />
-
-                <DialogSlider 
-                    open={mode === "saisie"}
-                    handleClose={handleCancel}
-                    douleur={name}
-                    intensity={value} // donc ici on passe le state value dans la props intensity
-                    handleChange={handleChangeSlider}
-                    handleCancel={handleCancel}
-                    handleSubmit={handleSubmit}
-                />
-            </div>
-
-            <div style={{
-                fontSize:"0.8rem", 
-                color: "rgba(0,0,0,0.4)",
-                textAlign:"center",
-                width:"100%",
-                height:"70px"
-            }}>
-                Copyright © 2020 Amine Chaigneau, Theo Bonifay, Hugo Bonifay
-            </div>
-        </div>
+        </>
     )
 }
 
