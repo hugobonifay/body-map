@@ -1,5 +1,4 @@
-import React from 'react';
-import BodyMap from './bodyMap';
+import { BodyMap } from './bodyMap/BodyMap';
 
 function App() {
     return <BodyMap />
