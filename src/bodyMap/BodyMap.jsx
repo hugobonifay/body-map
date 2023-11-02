@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { getBodyPart } from "./bodyParts"
 import style from "./BodyMap.module.css"
 
+// eslint-disable-next-line
 const BodyContainer = ({ children }) => (
     <div style={{
         width: "207px",
@@ -19,14 +20,8 @@ const BodyContainer = ({ children }) => (
     </div>
 )
 
-const BodyPart = ({ 
-    id,
-    d, 
-    fill, 
-    onClick, 
-    onMouseEnter, 
-    onMouseLeave 
-}) => {
+// eslint-disable-next-line
+const BodyPart = ({ id, d, fill, onClick, onMouseEnter, onMouseLeave }) => {
     const handleClick = () => {
         onClick(id)
     }
