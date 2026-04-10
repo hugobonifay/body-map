@@ -34,7 +34,7 @@
     height: 27px;
     cursor: pointer;
     text-transform: uppercase;
-    margin: 0;      
+    margin: 0;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -42,14 +42,17 @@
     -webkit-appearance: none;
     -moz-appearance: none;
 }
+
 .select {
     background-image:
         linear-gradient(45deg, transparent 50%, white 50%),
         linear-gradient(135deg, white 50%, transparent 50%),
         linear-gradient(to right, rgb(19, 19, 21), rgb(19, 19, 21));
     background-position:
-        calc(100% - 20px) 52%, /* moitié de flèche gauche position x y */
-        calc(100% - 15px) 52%, /* moitié de flèche droite position x y */
+        calc(100% - 20px) 52%,
+        /* moitié de flèche gauche position x y */
+        calc(100% - 15px) 52%,
+        /* moitié de flèche droite position x y */
         100% 0;
     background-size:
         5px 5px,
@@ -57,9 +60,11 @@
         2.5em 2.5em;
     background-repeat: no-repeat;
 }
+
 .select:focus {
     border: 1px solid rgb(255, 59, 48);
 }
+
 .select:focus {
     background-image:
         linear-gradient(45deg, transparent 50%, white 50%),
@@ -89,4 +94,15 @@
     .bodies {
         flex-direction: column;
     }
+}
+
+.bodyContainer {
+    width: 207px;
+    height: 500px;
+    margin: 30px auto;
+}
+
+.bodyPart {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }

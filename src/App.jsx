@@ -1,7 +1,7 @@
-import { BodyMap } from './bodyMap/BodyMap';
+import { BodyMap } from "./bodyMap/BodyMap";
 
 function App() {
-    return <BodyMap />
+  return <BodyMap />;
 }
 
 export default App;

@@ -1,152 +1,131 @@
-import { useCallback, useMemo, useState } from "react"
-import { getBodyPart } from "./bodyParts"
-import style from "./BodyMap.module.css"
+import { useCallback, useMemo, useState } from "react";
+import { getBodyParts } from "./bodyParts";
+import style from "./BodyMap.module.css";
+import { txt } from "./translations";
 
-// eslint-disable-next-line
 const BodyContainer = ({ children }) => (
-    <div style={{
-        width: "207px",
-        height: "500px",
-        margin: "30px auto"
-    }}>
-        <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 375.42 832.97"
-        >
-            <g>
-                {children}
-            </g>
-        </svg>
-    </div>
-)
+  <div className={style.bodyContainer}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375.42 832.97">
+      <g>{children}</g>
+    </svg>
+  </div>
+);
 
-// eslint-disable-next-line
-const BodyPart = ({ id, d, fill, onClick, onMouseEnter, onMouseLeave }) => {
-    const handleClick = () => {
-        onClick(id)
-    }
+const BodyPart = ({ part, fill, onClick, onMouseEnter, onMouseLeave }) => {
+  const handleClick = () => {
+    onClick(part.id);
+  };
 
-    const handleMouseEnter = () => {
-        onMouseEnter(id)
-    }
+  const handleMouseEnter = () => {
+    onMouseEnter(part.id);
+  };
 
-    const handleMouseLeave = () => {
-        onMouseLeave(id)
-    }
+  const handleMouseLeave = () => {
+    onMouseLeave(part.id);
+  };
 
-    return (
-        <path
-            d={d}
-            id={id}
-            onClick={handleClick}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            style={Object.assign({}, {
-                WebkitTapHighlightColor: "transparent",
-                cursor: "pointer"
-            }, { fill })}
-        />
-    )
-}
+  return (
+    <path
+      id={part.id}
+      d={part.d}
+      fill={fill}
+      className={style.bodyPart}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <title>{part.name}</title>
+    </path>
+  );
+};
 
 export const BodyMap = () => {
-    const [lang, setLang] = useState("en")
-    const [clicked, setClicked] = useState(null)
-    const [hovered, setHovered] = useState(null)
+  const [lang, setLang] = useState("en");
+  const [selectedPartId, setSelectedPartId] = useState(null);
+  const [hoveredPartId, setHoveredPartId] = useState(null);
 
-    const antBodyParts = useMemo(() => {
-        return getBodyPart(lang).filter(({ face }) => face === "ant")
-    }, [lang]) 
+  const data = useMemo(() => getBodyParts(lang), [lang]);
 
-    const postBodyPart = useMemo(() => {
-        return getBodyPart(lang).filter(({ face }) => face === "post")
-    }, [lang]) 
+  const selectedPartName = useMemo(() => {
+    if (selectedPartId === null) return null;
+    return data.find((part) => part.id === selectedPartId).name;
+  }, [data, selectedPartId]);
 
-    const clickedName = useMemo(() => {
-        if (!clicked) return ""
-        return getBodyPart(lang).find(d => clicked === d.id)?.name || ""
-    }, [lang, clicked])
+  const parts = useMemo(() => {
+    const antParts = data.filter((part) => part.face === "ant");
+    const postParts = data.filter((part) => part.face === "post");
+    return [
+      { name: txt[lang][1], parts: antParts },
+      { name: txt[lang][2], parts: postParts },
+    ];
+  }, [data, lang]);
 
-    const getFill = useCallback((bodyPartId) => {
-        if (clicked === bodyPartId) return "rgb(255, 59, 48)"
-        if (hovered === bodyPartId) return "rgb(85, 85, 87)"
-        return "rgb(75, 75, 77)"
-    }, [clicked, hovered])
+  const handleChangeLang = (e) => {
+    setLang(e.target.value);
+  };
 
-    const handleChangeLang = (e) => {
-        setLang(e.target.value)
-    }
+  const handleClick = (id) => {
+    setSelectedPartId(id);
+  };
 
-    const handleClick = (id) => {
-        setClicked(id)
-    }
+  const handleMouseEnter = (id) => {
+    if ("ontouchstart" in window) return;
+    setHoveredPartId(id);
+  };
 
-    const handleMouseEnter = (id) => {
-        if ("ontouchstart" in window) return
-        setHovered(id)
-    }
+  const handleMouseLeave = () => {
+    if ("ontouchstart" in window) return;
+    setHoveredPartId(null);
+  };
 
-    const handleMouseLeave = () => {
-        if ("ontouchstart" in window) return
-        setHovered(null)
-    }
-
-    return (
-        <>
-            <div className={style.header}>
-                <p>{clickedName || txt[lang][0]}</p>
-                <select value={lang} onChange={handleChangeLang} className={style.select}>
-                    <option value="fr">Français</option>
-                    <option value="en">English</option>
-                </select>
-            </div>
-            <div className={style.bodies}>
-                <div>
-                    <p>{txt[lang][1]}</p>
-                    <BodyContainer>
-                        {antBodyParts.map((bodyPart, index) => 
-                            <BodyPart
-                                key={index}
-                                id={bodyPart.id}
-                                d={bodyPart.d}
-                                fill={getFill(bodyPart.id)}
-                                onClick={handleClick} 
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                            />
-                        )}
-                    </BodyContainer>
-                </div>
-                <div>
-                    <p>{txt[lang][2]}</p>
-                    <BodyContainer>
-                        {postBodyPart.map((bodyPart, index) => 
-                            <BodyPart
-                                key={index}
-                                id={bodyPart.id}
-                                d={bodyPart.d}
-                                fill={getFill(bodyPart.id)}
-                                onClick={handleClick} 
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                            />
-                        )}
-                    </BodyContainer>
-                </div>
-            </div>
-        </>
-    )
-}
-
-const txt = {
-    fr: {
-        0: "Cliquez sur une partie du corps",
-        1: "Face antérieure",
-        2: "Face postérieure",
+  const getPartColor = useCallback(
+    (id) => {
+      if (selectedPartId === id) return "rgb(255, 59, 48)";
+      if (hoveredPartId === id) return "rgb(85, 85, 87)";
+      return "rgb(75, 75, 77)";
     },
-    en: {
-        0: "Click on the body!",
-        1: "Anterior side",
-        2: "Posterior side"
-    }
-}
+    [selectedPartId, hoveredPartId]
+  );
+
+  return (
+    <>
+      <div className={style.header}>
+        <p>{selectedPartName || txt[lang][0]}</p>
+
+        <select
+          value={lang}
+          onChange={handleChangeLang}
+          className={style.select}
+        >
+          <option value="fr">Français</option>
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+          <option value="es">Español</option>
+          <option value="it">Italiano</option>
+          <option value="nl">Nederlands</option>
+        </select>
+      </div>
+
+      <div className={style.bodies}>
+        {parts.map((side) => (
+          <div key={side.name}>
+            <p>{side.name}</p>
+
+            <BodyContainer>
+              {side.parts.map((part) => (
+                <BodyPart
+                  key={part.id}
+                  part={part}
+                  fill={getPartColor(part.id)}
+                  onClick={handleClick}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                />
+              ))}
+            </BodyContainer>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
